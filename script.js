@@ -1,5 +1,5 @@
 // ⚠️ IMPORTANTE: Incolla qui il tuo URL di Google Apps Script (/exec)
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwn1PzCEG4yyLT3qOkUQLUHA8or9xAv6jA8Q4707nbQp1l1XcjdJ_8gUiEXpLGBxrXJ/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVMP0mAZ59_s1edMsblpv6L4V4-2aQ_CKO0wYHwFk9mygzXWt3NyXYIsEOVTMOjppO/exec";
 
 console.log("✅ Script caricato. URL:", GOOGLE_SCRIPT_URL);
 
@@ -102,3 +102,4 @@ form.addEventListener('submit', function (e) {
 });
 
 console.log("✅ Event listener configurati");
+
