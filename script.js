@@ -1,5 +1,5 @@
 // ⚠️ IMPORTANTE: Incolla qui il tuo URL di Google Apps Script (/exec)
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6Y0F4yt8qHgKW7yTNa72a6SAFI043zE3g_DYETqZDPG6kXSHt6fHt2J5EaHEza2SM/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzge7FV0QSWqQlsb5cFmWiHI1TCt20ENxH0swYSR5dhwzUc6GYifo4pbzMhfybn2jww/exec";
 
 console.log("✅ Script caricato. URL:", GOOGLE_SCRIPT_URL);
 
