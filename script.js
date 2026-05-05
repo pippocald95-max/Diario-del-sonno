@@ -46,9 +46,36 @@ document.querySelectorAll('.rating-input').forEach(input => {
 // 4. VALIDAZIONE DURATE HH:MM (domande 6, 9, 13)
 document.querySelectorAll('.duration-input').forEach(input => {
   input.addEventListener('input', function () {
-    let value = this.value.replace(/[^0-9]/g, '');
-    if (value.length >= 2) value = value.substring(0, 2) + ':' + value.substring(2, 4);
-    this.value = value.substring(0, 5);
+    let digits = this.value.replace(/[^0-9]/g, '');
+
+    // Costruisce il valore HH:MM man mano che l'utente digita
+    if (digits.length >= 3) {
+      const hh = digits.substring(0, 2);
+      const mm = digits.substring(2, 4);
+
+      // Ore: max 23 — se l'utente scrive "83" corregge a "23"
+      const hhNum = Math.min(parseInt(hh, 10), 23);
+      // Minuti: max 59 — se l'utente scrive "83" corregge a "59"
+      const mmNum = Math.min(parseInt(mm || '0', 10), 59);
+
+      this.value = String(hhNum).padStart(2, '0') + ':' + String(mmNum).padStart(2, '0');
+    } else if (digits.length === 2) {
+      // Dopo 2 cifre aggiunge i due punti per guidare l'utente
+      this.value = digits + ':';
+    } else {
+      this.value = digits;
+    }
+  });
+
+  // Al momento dell'invio verifica che il formato sia HH:MM completo e valido
+  input.addEventListener('blur', function () {
+    const m = this.value.match(/^(\d{2}):(\d{2})$/);
+    if (this.value !== '' && (!m || parseInt(m[1], 10) > 23 || parseInt(m[2], 10) > 59)) {
+      this.setCustomValidity('Formato non valido. Usa HH:MM (es. 07:30, ore max 23, minuti max 59)');
+      this.reportValidity();
+    } else {
+      this.setCustomValidity('');
+    }
   });
 });
 
@@ -102,4 +129,3 @@ form.addEventListener('submit', function (e) {
 });
 
 console.log("✅ Event listener configurati");
-
