@@ -236,3 +236,129 @@ select {
     font-size: 1.1rem;
     text-align: center;
 }
+
+
+/* ── NUOVI STILI: SALVA ED ESCI, NOTE, DRAFT BANNER ── */
+
+/* Banner bozza esistente */
+.draft-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff8e1;
+    border-left: 4px solid #f0a500;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    color: #7a5c00;
+    gap: 12px;
+}
+
+.btn-discard {
+    background: none;
+    border: 1px solid #f0a500;
+    color: #f0a500;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.btn-discard:hover {
+    background-color: #f0a500;
+    color: white;
+}
+
+/* Pulsanti azione affiancati */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.action-buttons .btn-primary {
+    margin-top: 0;
+    flex: 1;
+}
+
+/* Bottone Salva ed Esci */
+.btn-save {
+    flex: 1;
+    background-color: white;
+    color: var(--primary-orange);
+    border: 2px solid var(--primary-orange);
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+    background-color: var(--primary-orange);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.btn-save:disabled {
+    background-color: #eee;
+    border-color: #bdc3c7;
+    color: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Messaggio conferma salvataggio */
+.save-msg {
+    color: var(--success-color);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0fff4;
+    border-radius: 4px;
+}
+
+/* Campo Note - textarea */
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fafbfc;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+textarea::placeholder {
+    color: #adb5bd;
+}
+
+/* Descrizione campo Note */
+.field-description {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* Responsive: pulsanti in colonna su mobile */
+@media (max-width: 600px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+}
