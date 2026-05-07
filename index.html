@@ -4,74 +4,78 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Il Tuo Diario Del Sonno (2026)</title>
-
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
   <div class="main-container">
     <header class="header">
-      <h1>Il Tuo Diario Del Sonno  (2026)</h1>
+      <h1>Il Tuo Diario Del Sonno&nbsp;&nbsp;(2026)</h1>
       <p>Inserisci le informazioni richieste e tieni traccia del tuo sonno</p>
     </header>
 
+    <!-- Banner bozza esistente -->
+    <div id="draftBanner" class="draft-banner hidden">
+      <span>Hai una compilazione salvata. I campi sono stati ripristinati.</span>
+      <button type="button" id="discardDraftBtn" class="btn-discard">Inizia nuovo</button>
+    </div>
+
     <form id="sleepForm" class="sleep-form" action="#" method="POST" autocomplete="on">
-      <!-- Questo campo verrà riempito da script.js -->
+      <!-- Campo hidden per payload JSON -->
       <input type="hidden" name="payload" id="payload" />
 
       <div class="form-group">
-        <label>1.Inserisci il tuo Nome e Cognome.<span class="required">*</span></label>
+        <label>1. Inserisci il tuo Nome e Cognome.<span class="required">*</span></label>
         <input type="text" name="nome" required placeholder="Inserisci la risposta" />
       </div>
 
       <div class="form-group">
-        <label>2.A che ora sei andato a letto? (utilizza il formato hh:mm) <span class="required">*</span></label>
+        <label>2. A che ora sei andato a letto? (utilizza il formato hh:mm) <span class="required">*</span></label>
         <input type="time" name="orario_letto" required />
       </div>
 
       <div class="form-group">
-        <label>3.A che ora hai spento le luci per andare a dormire? (utilizza il formato hh:mm)<span class="required">*</span></label>
+        <label>3. A che ora hai spento le luci per andare a dormire? (utilizza il formato hh:mm)<span class="required">*</span></label>
         <input type="time" name="orario_luci" required />
       </div>
 
       <div class="form-group">
-        <label>4.Quanto tempo hai impiegato per addormentarti? (indica il tempo in minuti, utilizza solo cifre numeriche)<span class="required">*</span></label>
-        <input type="text" name="tempo_addormentarsi" required placeholder="Inserisci la risposta" class="numeric-only" inputmode="numeric" />
+        <label>4. Quanto tempo hai impiegato per addormentarti? (minuti, es. 15 oppure 7.5)<span class="required">*</span></label>
+        <input type="text" name="tempo_addormentarsi" required placeholder="es. 15" class="numeric-decimal" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>5.Quante volte ti sei svegliato la scorsa notte?<span class="required">*</span></label>
-        <input type="text" name="risvegli" required placeholder="Inserisci la risposta" class="numeric-only" inputmode="numeric" />
+        <label>5. Quante volte ti sei svegliato la scorsa notte?<span class="required">*</span></label>
+        <input type="text" name="risvegli" required placeholder="es. 2" class="numeric-decimal" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>6.Quanto tempo sei stato sveglio durante la notte? (utilizza il formato hh:mm, ad esempio, se sei stato sveglio un'ora e mezza scrivi 01:30)<span class="required">*</span></label>
+        <label>6. Quanto tempo sei stato sveglio durante la notte? (hh:mm, es. 01:30)<span class="required">*</span></label>
         <input type="text" name="tempo_sveglio" required placeholder="00:00" class="duration-input" inputmode="numeric" />
       </div>
 
       <div class="form-group">
-        <label>7.A che ora ti sei svegliato per l'ultima volta stamattina? (utilizza il formato hh:mm)<span class="required">*</span></label>
+        <label>7. A che ora ti sei svegliato per l'ultima volta stamattina? (hh:mm)<span class="required">*</span></label>
         <input type="time" name="orario_sveglia" required />
       </div>
 
       <div class="form-group">
-        <label>8.A che ora ti sei alzato dal letto? (utilizza il formato hh:mm)<span class="required">*</span></label>
+        <label>8. A che ora ti sei alzato dal letto? (hh:mm)<span class="required">*</span></label>
         <input type="time" name="orario_alzata" required />
       </div>
 
       <div class="form-group">
-        <label>9.All'incirca, quante ore hai dormito la scorsa notte? (utilizza il formato hh:mm) <span class="required">*</span></label>
+        <label>9. All'incirca, quante ore hai dormito la scorsa notte? (hh:mm)<span class="required">*</span></label>
         <input type="text" name="ore_totali" required placeholder="00:00" class="duration-input" inputmode="numeric" />
       </div>
 
       <div class="form-group">
-        <label>10.Hai consumato sonniferi la scorsa notte? Se si, quanti? <span class="required">*</span></label>
+        <label>10. Hai consumato sonniferi la scorsa notte? Se si, quanti?<span class="required">*</span></label>
         <input type="text" name="sonniferi" required placeholder="Inserisci la risposta" />
       </div>
 
       <div class="form-group">
-        <label>11.Hai pensato a qualcosa la scorsa notte, priima di addormentarti? Se si, a cosa?<span class="required">*</span></label>
+        <label>11. Hai pensato a qualcosa la scorsa notte, prima di addormentarti? Se si, a cosa?<span class="required">*</span></label>
         <input type="text" name="pensieri" required placeholder="Inserisci la risposta" />
       </div>
 
@@ -85,53 +89,67 @@
       </div>
 
       <div class="form-group hidden" id="napTimeContainer">
-        <label>13.Se si, per quanto tempo? (Indica il tempo in hh:mm) <span class="required">*</span></label>
+        <label>13. Se si, per quanto tempo? (hh:mm)<span class="required">*</span></label>
         <input type="text" name="tempo_riposo" id="tempo_riposo" placeholder="00:00" class="duration-input" inputmode="numeric" />
       </div>
 
       <div class="form-group">
-        <label>14.Su una scala da 1 a 10, come valuteresti il tuo livello di energia complessivo oggi, considerando in particolare la tua vitalità al mattino?<span class="required">*</span></label>
-        <input type="text" name="energia_mattina" required placeholder="1-10" class="rating-input" inputmode="numeric" />
+        <label>14. Su una scala da 1 a 10, come valuteresti il tuo livello di energia al mattino? (es. 7 o 7.5)<span class="required">*</span></label>
+        <input type="text" name="energia_mattina" required placeholder="1-10" class="rating-input" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>15.Su una scala da 1 a 10, come valuteresti il tuo livello di energia complessivo oggi, considerando in particolare la tua vitalità al durante il giorno?<span class="required">*</span></label>
-        <input type="text" name="energia_giorno" required placeholder="1-10" class="rating-input" inputmode="numeric" />
+        <label>15. Su una scala da 1 a 10, come valuteresti il tuo livello di energia durante il giorno? (es. 7 o 7.5)<span class="required">*</span></label>
+        <input type="text" name="energia_giorno" required placeholder="1-10" class="rating-input" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>16.Su una scala da 1 a 10, come valuteresti il tuo livello di energia complessivo oggi, considerando in particolare la tua vitalità la sera?<span class="required">*</span></label>
-        <input type="text" name="energia_sera" required placeholder="1-10" class="rating-input" inputmode="numeric" />
+        <label>16. Su una scala da 1 a 10, come valuteresti il tuo livello di energia la sera? (es. 7 o 7.5)<span class="required">*</span></label>
+        <input type="text" name="energia_sera" required placeholder="1-10" class="rating-input" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>17.Valutando il tuo umore generale oggi su una scala da 1 a 10, dove 1 è molto negativo e 10 è molto positivo, che punteggio daresti?<span class="required">*</span></label>
-        <input type="text" name="umore" required placeholder="1-10" class="rating-input" inputmode="numeric" />
+        <label>17. Valutando il tuo umore generale oggi su una scala da 1 a 10 (1=molto negativo, 10=molto positivo)<span class="required">*</span></label>
+        <input type="text" name="umore" required placeholder="1-10" class="rating-input" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>18.Dopo il tuo ultimo periodo di sonno, quanto ti senti riposato/a su una scala da 1 a 10, dove 1 è per nulla riposato/a e 10 è completamente riposato/a?<span class="required">*</span></label>
-        <input type="text" name="riposo_percepito" required placeholder="1-10" class="rating-input" inputmode="numeric" />
+        <label>18. Dopo il tuo ultimo periodo di sonno, quanto ti senti riposato/a? (1=per nulla, 10=completamente)<span class="required">*</span></label>
+        <input type="text" name="riposo_percepito" required placeholder="1-10" class="rating-input" inputmode="decimal" />
       </div>
 
       <div class="form-group">
-        <label>19.Considerando la tua energia mentale e la tua determinazione nell'affrontare le sfide quotidiane, come valuteresti la tua motivazione e il tuo slancio oggi su una scala da 1 a 10?<span class="required">*</span></label>
-        <input type="text" name="motivazione" required placeholder="1-10" class="rating-input" inputmode="numeric" />
+        <label>19. Come valuteresti la tua motivazione e il tuo slancio oggi su una scala da 1 a 10?<span class="required">*</span></label>
+        <input type="text" name="motivazione" required placeholder="1-10" class="rating-input" inputmode="decimal" />
       </div>
 
-      <button type="submit" id="submitBtn" class="btn-primary">Invia Diario</button>
+      <!-- CAMPO NOTE -->
+      <div class="form-group">
+        <label for="note">Note</label>
+        <p class="field-description">Usa questo spazio per annotare dettagli importanti sulla notte o sulla giornata che possono aiutare a interpretare i dati.</p>
+        <textarea name="note" id="note" rows="4" placeholder="Es. Ho dormito in un posto diverso, avevo febbre, evento stressante..."></textarea>
+      </div>
+
+      <!-- Pulsanti azione -->
+      <div class="action-buttons">
+        <button type="button" id="saveBtn" class="btn-save">Salva ed Esci</button>
+        <button type="submit" id="submitBtn" class="btn-primary">Invia Diario</button>
+      </div>
+
       <p id="errorMsg" class="error-msg hidden">Per favore, compila tutti i campi obbligatori correttamente.</p>
+      <p id="saveMsg" class="save-msg hidden">Bozza salvata! Puoi chiudere questa pagina e riprendere quando vuoi.</p>
     </form>
 
+    <!-- Success view -->
     <div id="successView" class="success-view hidden">
-      <div class="success-icon">✓</div>
+      <div class="success-icon">&#10003;</div>
       <h2>Grazie!</h2>
       <p>I tuoi dati sono stati salvati con successo.</p>
-      <button onclick="window.location.reload()" class="btn-secondary">Compila un altro diario</button>
+      <button class="btn-secondary" onclick="resetForm()">Compila un altro diario</button>
     </div>
   </div>
 
-  <!-- POST invisibile: il form viene inviato qui, così la pagina non cambia -->
+  <!-- Hidden iframe per submit CORS-free -->
   <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
   <script src="script.js"></script>
