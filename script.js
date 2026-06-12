@@ -2,7 +2,7 @@
 // CONFIGURAZIONE
 // ─────────────────────────────────────────────
 const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbzge7FV0QSWqQlsb5cFmWiHI1TCt20ENxH0swYSR5dhwzUc6GYifo4pbzMhfybn2jww/exec";
+  "https://script.google.com/macros/s/AKfycbz3b_x_NQEKfaeo-ZKBJnT1vabGdmDj2RKKnujiEgG1BhE-47exdYHbrSLTZz96aawe/exec";
 
 const DRAFT_KEY = "sleepDiaryDraft";
 
