@@ -65,7 +65,7 @@ document.querySelectorAll('.numeric-decimal').forEach(input => {
 
 // ─────────────────────────────────────────────
 // 4. VALIDAZIONE VOTI 1-10 CON DECIMALI
-// (domande 14-19) - es. 7.5, 0.5, 10
+// (domande 17-24) - es. 7.5, 0.5, 10
 // ─────────────────────────────────────────────
 document.querySelectorAll('.rating-input').forEach(input => {
   input.addEventListener('input', function () {
@@ -87,7 +87,7 @@ document.querySelectorAll('.rating-input').forEach(input => {
 });
 
 // ─────────────────────────────────────────────
-// 5. VALIDAZIONE DURATE HH:MM (dom. 6, 9, 13)
+// 5. VALIDAZIONE DURATE HH:MM (dom. 6, 9, 16)
 // ─────────────────────────────────────────────
 document.querySelectorAll('.duration-input').forEach(input => {
   input.addEventListener('input', function () {
