@@ -14,6 +14,11 @@
       <p>Inserisci le informazioni richieste e tieni traccia del tuo sonno</p>
     </header>
 
+    <!-- Avviso codice cliente mancante -->
+    <div id="missingIdBanner" class="draft-banner hidden">
+      <span>Non troviamo il tuo codice cliente in questo link. Usa il link ricevuto dopo aver compilato il Questionario, oppure contattaci se non lo hai più.</span>
+    </div>
+
     <!-- Banner bozza esistente -->
     <div id="draftBanner" class="draft-banner hidden">
       <span>Hai una compilazione salvata. I campi sono stati ripristinati.</span>
@@ -23,6 +28,8 @@
     <form id="sleepForm" class="sleep-form" action="#" method="POST" autocomplete="on">
       <!-- Campo hidden per payload JSON -->
       <input type="hidden" name="payload" id="payload" />
+      <!-- Codice cliente, precompilato dal link ricevuto dopo il Questionario -->
+      <input type="hidden" name="client_id" id="client_id" />
 
       <div class="form-group">
         <label>1. Inserisci il tuo Nome e Cognome.<span class="required">*</span></label>
