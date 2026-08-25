@@ -5,6 +5,7 @@ const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzh_Ts1vGJooViU-yM3c9d6cR5966md8WpcbiJn2G51TfftaD0v_TxVEkR-Smq5bMCD/exec";
 
 const DRAFT_KEY = "sleepDiaryDraft";
+const CLIENT_ID_KEY = "sleepDiaryClientId";
 
 // ─────────────────────────────────────────────
 // ELEMENTI DOM
@@ -14,6 +15,7 @@ const napSelect    = document.getElementById('riposo_pomeridiano');
 const napContainer = document.getElementById('napTimeContainer');
 const napInput     = document.getElementById('tempo_riposo');
 const payloadInput = document.getElementById('payload');
+const clientIdInput = document.getElementById('client_id');
 const submitBtn    = document.getElementById('submitBtn');
 const saveBtn      = document.getElementById('saveBtn');
 const errorMsg     = document.getElementById('errorMsg');
@@ -21,6 +23,25 @@ const saveMsg      = document.getElementById('saveMsg');
 const successView  = document.getElementById('successView');
 const draftBanner  = document.getElementById('draftBanner');
 const discardBtn   = document.getElementById('discardDraftBtn');
+const missingIdBanner = document.getElementById('missingIdBanner');
+
+// ─────────────────────────────────────────────
+// CODICE CLIENTE (client_id)
+// Letto dal link (?cid=...) ricevuto dopo il Questionario.
+// Se assente, si prova a riusare quello dell'ultima visita da questo
+// dispositivo/browser (localStorage), cosi' non serve rimandare il link
+// ogni volta che il cliente compila il diario.
+// ─────────────────────────────────────────────
+(function initClientId() {
+  const fromUrl = new URLSearchParams(window.location.search).get('cid');
+  const clientId = fromUrl || localStorage.getItem(CLIENT_ID_KEY) || '';
+  if (clientIdInput) clientIdInput.value = clientId;
+  if (clientId) {
+    localStorage.setItem(CLIENT_ID_KEY, clientId);
+  } else if (missingIdBanner) {
+    missingIdBanner.classList.remove('hidden');
+  }
+})();
 
 // ─────────────────────────────────────────────
 // 1. PARSING NUMERICO CENTRALIZZATO
