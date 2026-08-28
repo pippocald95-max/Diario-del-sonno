@@ -193,44 +193,6 @@ function restoreFromDraft(draft) {
   });
 }
 
-// ─────────────────────────────────────────────
-// RECUPERO BOZZA DAL BACKEND (JSONP)
-// Copre il caso in cui il cliente riapra il diario da un browser/
-// dispositivo diverso da quello con cui aveva salvato (link riaperto da
-// un browser interno di un'app di messaggistica, nuovo telefono, ecc.):
-// la bozza locale non c'e' ma quella sul foglio si'. Filtrata sempre per
-// client_id esatto lato backend, e ri-controllata anche qui come ulteriore
-// sicurezza prima di popolare il form.
-// ─────────────────────────────────────────────
-function fetchDraftFromBackend_(clientId) {
-  if (!clientId) return;
-  const cbName = '__diaryDraftCb_' + Date.now();
-  const cleanup = function () {
-    delete window[cbName];
-    if (scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
-  };
-  window[cbName] = function (res) {
-    cleanup();
-    if (!res || !res.ok || !res.data) return;
-    if (String(res.data.client_id || '') !== String(clientId)) return;
-
-    restoreFromDraft({ data: res.data });
-    draftBanner.classList.remove('hidden');
-
-    const key = draftKeyFor_(clientId);
-    localStorage.setItem(key, JSON.stringify({
-      draftId: res.data.draftId || generateDraftId(),
-      data: res.data,
-      lastUpdatedAt: res.data.lastUpdatedAt || new Date().toISOString(),
-      stato: 'draft'
-    }));
-  };
-  const scriptEl = document.createElement('script');
-  scriptEl.src = GOOGLE_SCRIPT_URL + '?action=getDraft&cid=' + encodeURIComponent(clientId) + '&callback=' + cbName;
-  scriptEl.onerror = cleanup;
-  document.body.appendChild(scriptEl);
-}
-
 function sendDraftToBackend(draft) {
   const payload = Object.assign({}, draft.data, {
     stato: 'draft',
@@ -299,16 +261,11 @@ if (discardBtn) {
       if (draft && draft.data && draft.stato === 'draft') {
         restoreFromDraft(draft);
         draftBanner.classList.remove('hidden');
-        return;
       }
     } catch (e) {
       localStorage.removeItem(key);
     }
   }
-
-  // Nessuna bozza su questo browser: prova a recuperarla dal backend, nel
-  // caso sia stata salvata da un altro dispositivo/browser.
-  fetchDraftFromBackend_(clientId);
 })();
 
 // ─────────────────────────────────────────────
