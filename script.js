@@ -44,6 +44,16 @@ const missingIdBanner = document.getElementById('missingIdBanner');
 })();
 
 // ─────────────────────────────────────────────
+// CHIAVE BOZZA PER-CLIENTE
+// La bozza va sempre isolata per client_id: due clienti diversi che usano
+// lo stesso browser/dispositivo (es. link testati in sequenza) non devono
+// MAI vedersi ripristinati a vicenda i dati inseriti.
+// ─────────────────────────────────────────────
+function draftKeyFor_(clientId) {
+  return clientId ? (DRAFT_KEY + '_' + clientId) : DRAFT_KEY;
+}
+
+// ─────────────────────────────────────────────
 // 1. PARSING NUMERICO CENTRALIZZATO
 // Gestisce sia "0.5" che "0,5"
 // ─────────────────────────────────────────────
@@ -155,18 +165,23 @@ function collectFormData() {
 }
 
 function saveDraftLocally() {
-  let draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+  const key = draftKeyFor_(clientIdInput ? clientIdInput.value : '');
+  let draft = JSON.parse(localStorage.getItem(key) || '{}');
   if (!draft.draftId) draft.draftId = generateDraftId();
   draft.data = collectFormData();
   draft.lastUpdatedAt = new Date().toISOString();
   draft.stato = 'draft';
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  localStorage.setItem(key, JSON.stringify(draft));
   return draft;
 }
 
 function restoreFromDraft(draft) {
   const data = draft.data || {};
   Object.keys(data).forEach(name => {
+    // Il client_id arriva sempre dalla sessione corrente (link/cid in uso),
+    // mai da una bozza salvata in precedenza: altrimenti una bozza di un
+    // cliente potrebbe "rietichettarsi" con l'identita' di un altro.
+    if (name === 'client_id') return;
     const el = form.querySelector('[name="' + name + '"]');
     if (!el) return;
     if (el.tagName === 'SELECT') {
@@ -176,6 +191,44 @@ function restoreFromDraft(draft) {
       el.value = data[name];
     }
   });
+}
+
+// ─────────────────────────────────────────────
+// RECUPERO BOZZA DAL BACKEND (JSONP)
+// Copre il caso in cui il cliente riapra il diario da un browser/
+// dispositivo diverso da quello con cui aveva salvato (link riaperto da
+// un browser interno di un'app di messaggistica, nuovo telefono, ecc.):
+// la bozza locale non c'e' ma quella sul foglio si'. Filtrata sempre per
+// client_id esatto lato backend, e ri-controllata anche qui come ulteriore
+// sicurezza prima di popolare il form.
+// ─────────────────────────────────────────────
+function fetchDraftFromBackend_(clientId) {
+  if (!clientId) return;
+  const cbName = '__diaryDraftCb_' + Date.now();
+  const cleanup = function () {
+    delete window[cbName];
+    if (scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+  };
+  window[cbName] = function (res) {
+    cleanup();
+    if (!res || !res.ok || !res.data) return;
+    if (String(res.data.client_id || '') !== String(clientId)) return;
+
+    restoreFromDraft({ data: res.data });
+    draftBanner.classList.remove('hidden');
+
+    const key = draftKeyFor_(clientId);
+    localStorage.setItem(key, JSON.stringify({
+      draftId: res.data.draftId || generateDraftId(),
+      data: res.data,
+      lastUpdatedAt: res.data.lastUpdatedAt || new Date().toISOString(),
+      stato: 'draft'
+    }));
+  };
+  const scriptEl = document.createElement('script');
+  scriptEl.src = GOOGLE_SCRIPT_URL + '?action=getDraft&cid=' + encodeURIComponent(clientId) + '&callback=' + cbName;
+  scriptEl.onerror = cleanup;
+  document.body.appendChild(scriptEl);
 }
 
 function sendDraftToBackend(draft) {
@@ -217,7 +270,7 @@ saveBtn.addEventListener('click', function () {
 // ─────────────────────────────────────────────
 if (discardBtn) {
   discardBtn.addEventListener('click', function () {
-    localStorage.removeItem(DRAFT_KEY);
+    localStorage.removeItem(draftKeyFor_(clientIdInput ? clientIdInput.value : ''));
     draftBanner.classList.add('hidden');
     form.reset();
     napContainer.classList.add('hidden');
@@ -229,17 +282,33 @@ if (discardBtn) {
 // 9. RIPRISTINO BOZZA AL CARICAMENTO
 // ─────────────────────────────────────────────
 (function initDraftRestore() {
-  const saved = localStorage.getItem(DRAFT_KEY);
-  if (!saved) return;
-  try {
-    const draft = JSON.parse(saved);
-    if (draft && draft.data && draft.stato === 'draft') {
-      restoreFromDraft(draft);
-      draftBanner.classList.remove('hidden');
+  // Pulizia di sicurezza una tantum: rimuove eventuali bozze salvate con la
+  // vecchia chiave globale (condivisa fra TUTTI i clienti su questo
+  // browser), cosi' non puo' piu' essere ripristinata per errore su un
+  // cliente diverso da quello che l'ha creata.
+  try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+
+  const clientId = clientIdInput ? clientIdInput.value : '';
+  if (!clientId) return;
+
+  const key = draftKeyFor_(clientId);
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    try {
+      const draft = JSON.parse(saved);
+      if (draft && draft.data && draft.stato === 'draft') {
+        restoreFromDraft(draft);
+        draftBanner.classList.remove('hidden');
+        return;
+      }
+    } catch (e) {
+      localStorage.removeItem(key);
     }
-  } catch (e) {
-    localStorage.removeItem(DRAFT_KEY);
   }
+
+  // Nessuna bozza su questo browser: prova a recuperarla dal backend, nel
+  // caso sia stata salvata da un altro dispositivo/browser.
+  fetchDraftFromBackend_(clientId);
 })();
 
 // ─────────────────────────────────────────────
@@ -265,7 +334,7 @@ form.addEventListener('submit', function (e) {
   }
 
   // Aggiungi draftId se esiste una bozza
-  const savedDraft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+  const savedDraft = JSON.parse(localStorage.getItem(draftKeyFor_(data.client_id || '')) || '{}');
   if (savedDraft.draftId) {
     data.draftId = savedDraft.draftId;
   }
@@ -282,7 +351,7 @@ form.addEventListener('submit', function (e) {
   form.target = 'hidden_iframe';
 
   document.getElementById('hidden_iframe').onload = function () {
-    localStorage.removeItem(DRAFT_KEY);
+    localStorage.removeItem(draftKeyFor_(data.client_id || ''));
     form.classList.add('hidden');
     successView.classList.remove('hidden');
   };
@@ -301,7 +370,7 @@ function resetForm() {
   submitBtn.innerText = 'Invia Diario';
   napContainer.classList.add('hidden');
   napInput.required = false;
-  localStorage.removeItem(DRAFT_KEY);
+  localStorage.removeItem(draftKeyFor_(clientIdInput ? clientIdInput.value : ''));
   draftBanner.classList.add('hidden');
   saveMsg.classList.add('hidden');
 }
