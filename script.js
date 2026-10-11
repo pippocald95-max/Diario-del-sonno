@@ -33,14 +33,26 @@ const missingIdBanner = document.getElementById('missingIdBanner');
 // ogni volta che il cliente compila il diario.
 // ─────────────────────────────────────────────
 (function initClientId() {
-  const fromUrl = new URLSearchParams(window.location.search).get('cid');
+  // [PATCH 2026-10-11] oltre a cid legge t (firma del link personale) e v (lungo/corto).
+  // cid e t vengono ricordati su questo dispositivo: dai preferiti senza parametri funziona lo stesso.
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get('cid');
   const clientId = fromUrl || localStorage.getItem(CLIENT_ID_KEY) || '';
+  const token = (fromUrl ? params.get('t') : localStorage.getItem(CLIENT_ID_KEY + '_t')) || '';
+  const version = params.get('v') === 'lungo' ? 'lungo' : 'corto';
   if (clientIdInput) clientIdInput.value = clientId;
+  const tokenInput = document.getElementById('link_token');
+  const versionInput = document.getElementById('diary_version');
+  if (tokenInput) tokenInput.value = token;
+  if (versionInput) versionInput.value = version;
   if (clientId) {
     localStorage.setItem(CLIENT_ID_KEY, clientId);
+    if (token) localStorage.setItem(CLIENT_ID_KEY + '_t', token);
   } else if (missingIdBanner) {
     missingIdBanner.classList.remove('hidden');
   }
+  const longSection = document.getElementById('sezione-lunga');
+  if (longSection && version === 'lungo') longSection.classList.remove('hidden');
 })();
 
 // ─────────────────────────────────────────────
