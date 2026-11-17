@@ -94,6 +94,31 @@ napSelect.addEventListener('change', function () {
 });
 
 // ─────────────────────────────────────────────
+// 2b. DOMANDE CONDIZIONALI SULL'ALIMENTAZIONE (dal 17/11/2026)
+// Un blocco con data-show-when="campo:regola" compare solo se la regola è
+// vera; quando è nascosto le sue domande non sono obbligatorie e si svuotano.
+//   nonzero → il campo ha un valore diverso da "0"
+//   cenato  → il campo ha un valore diverso da "non ho cenato"
+// ─────────────────────────────────────────────
+function aggiornaCondizionali() {
+  document.querySelectorAll('[data-show-when]').forEach(function (box) {
+    const parti = box.dataset.showWhen.split(':');
+    const el = form.elements[parti[0]];
+    const v = el ? el.value : '';
+    let visibile = false;
+    if (parti[1] === 'nonzero') visibile = v !== '' && v !== '0';
+    if (parti[1] === 'cenato') visibile = v !== '' && v !== 'non ho cenato';
+    box.classList.toggle('hidden', !visibile);
+    box.querySelectorAll('input, select').forEach(function (campo) {
+      campo.required = visibile;
+      if (!visibile) campo.value = '';
+    });
+  });
+}
+form.addEventListener('change', aggiornaCondizionali);
+aggiornaCondizionali();
+
+// ─────────────────────────────────────────────
 // 3. VALIDAZIONE CAMPI NUMERICI CON DECIMALI
 // (domande 4, 5)
 // ─────────────────────────────────────────────
@@ -249,6 +274,7 @@ if (discardBtn) {
     form.reset();
     napContainer.classList.add('hidden');
     napInput.required = false;
+    aggiornaCondizionali();
   });
 }
 
@@ -272,6 +298,7 @@ if (discardBtn) {
       const draft = JSON.parse(saved);
       if (draft && draft.data && draft.stato === 'draft') {
         restoreFromDraft(draft);
+        aggiornaCondizionali();
         draftBanner.classList.remove('hidden');
       }
     } catch (e) {
@@ -339,6 +366,7 @@ function resetForm() {
   submitBtn.innerText = 'Invia Diario';
   napContainer.classList.add('hidden');
   napInput.required = false;
+  aggiornaCondizionali();
   localStorage.removeItem(draftKeyFor_(clientIdInput ? clientIdInput.value : ''));
   draftBanner.classList.add('hidden');
   saveMsg.classList.add('hidden');

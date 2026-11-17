@@ -362,3 +362,18 @@ textarea::placeholder {
         flex-direction: column;
     }
 }
+
+/* Sezione Alimentazione (17/11/2026) */
+.form-section-title {
+    margin: 28px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--primary-orange);
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+.form-group .hint {
+    display: block;
+    margin: -2px 0 8px;
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
